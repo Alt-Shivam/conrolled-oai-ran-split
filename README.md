@@ -1,4 +1,4 @@
-# conrolled-oai-ran-split
+# controlled-oai-ran-split
 
 ## To run this setup just apply all the yaml files via:
 ```
