@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oai-gnb-du
+  namespace: ran
+  labels:
+    app.kubernetes.io/name: oai-gnb-du
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-gnb-du
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: oai-gnb-du
+        app.kubernetes.io/name: oai-gnb-du
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [
+           {
+            "name": "ran-net",
+            "interface": "f1",
+            "ips": ["192.168.8.20"],
+            "gateways": ["192.168.8.1"]
+           }
+          ]
+    spec:
+      containers:
+      - name: gnbdu
+        image: arorasagar/testing-images:oai-gnb-telnet
+        imagePullPolicy: IfNotPresent
+        # command: ["/bin/sh"]
+        # args: ["-c", "sleep 10000"]
+        env:
+        - name: USE_ADDITIONAL_OPTIONS
+          value: --sa --rfsim --log_config.global_log_options level,nocolor,time --telnetsrv
+            --telnetsrv.shrmod o1 --telnetsrv.listenaddr 192.168.74.2
+        ports:
+        - containerPort: 38472
+          name: f1c
+          protocol: SCTP
+        - containerPort: 2152
+          name: f1u
+          protocol: UDP
+        resources:
+          limits:
+            cpu: "2"
+            memory: 2Gi
+          requests:
+            cpu: "2"
+            memory: 1Gi
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: configuration
+          mountPath: /opt/oai-gnb/etc/gnb.conf
+          subPath: gnb.conf
+      volumes:
+      - name: configuration
+        configMap:
+          name: oai-gnb-du-configmap
+          defaultMode: 420
+      serviceAccountName: oai-gnb-du-sa
+      terminationGracePeriodSeconds: 5

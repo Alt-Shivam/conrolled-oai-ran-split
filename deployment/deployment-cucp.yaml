@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oai-gnb-cu-cp
+  namespace: ran
+  labels:
+    app.kubernetes.io/name: oai-gnb-cu-cp
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: oai-gnb-cu-cp
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: oai-gnb-cu-cp
+        app.kubernetes.io/name: oai-gnb-cu-cp
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [
+           {
+            "name": "ran-net",
+            "interface": "e1",
+            "ips": ["192.168.8.30/24"],
+            "gateways": ["192.168.8.1"]
+           },
+           {
+            "name": "ran-net",
+            "interface": "f1c",
+            "ips": ["192.168.8.31/24"],
+            "gateways": ["192.168.8.1"]
+           },
+           {
+            "name": "ran-net",
+            "interface": "n2",
+            "ips": ["192.168.8.32/24"],
+            "gateways": ["192.168.8.1"]
+           }
+          ]
+    spec:
+      containers:
+      - name: gnbcucp
+        image: arorasagar/testing-images:oai-gnb-telnet
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh"]
+        args: ["-c", "sleep 10000"]
+        env:
+        - name: TZ
+          value: Europe/Paris
+        - name: USE_ADDITIONAL_OPTIONS
+          value: --sa --log_config.global_log_options level,nocolor,time
+        - name: USE_VOLUMED_CONF
+          value: "yes"
+        ports:
+        - containerPort: 36412
+          name: n2
+          protocol: SCTP
+        - containerPort: 38462
+          name: e1
+          protocol: SCTP
+        - containerPort: 38472
+          name: f1c
+          protocol: UDP
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /opt/oai-gnb/etc/gnb.conf
+          name: configuration
+          subPath: gnb.conf
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 5
+      serviceAccountName: oai-gnb-cu-cp-sa
+      volumes:
+      - name: configuration
+        configMap:
+          name: oai-gnb-cu-cp-configmap
+          defaultMode: 420
