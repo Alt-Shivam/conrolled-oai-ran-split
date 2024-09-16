@@ -48,8 +48,8 @@ spec:
       - name: gnbcucp
         image: arorasagar/testing-images:oai-gnb-telnet
         imagePullPolicy: IfNotPresent
-        command: ["/bin/sh"]
-        args: ["-c", "sleep 10000"]
+        # command: ["/bin/sh"]
+        # args: ["-c", "sleep 10000"]
         env:
         - name: TZ
           value: Europe/Paris
@@ -67,6 +67,13 @@ spec:
         - containerPort: 38472
           name: f1c
           protocol: UDP
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
         securityContext:
           privileged: true
         volumeMounts:

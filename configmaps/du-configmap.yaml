@@ -166,7 +166,7 @@ data:
       tr_n_preference  = "f1";
       local_n_if_name  = "f1";
       local_n_address  = "192.168.8.20";
-      remote_n_address = "192.168.8.41";
+      remote_n_address = "192.168.8.31";
       local_n_portc    = 500;
       local_n_portd    = 2152;
       remote_n_portc   = 501;

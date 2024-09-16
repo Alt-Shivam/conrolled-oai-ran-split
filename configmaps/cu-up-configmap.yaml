@@ -58,9 +58,9 @@ data:
         NETWORK_INTERFACES :
         {
           GNB_INTERFACE_NAME_FOR_NG_AMF = "n3";
-          GNB_IPV4_ADDRESS_FOR_NG_AMF = "172.3.0.2";
+          GNB_IPV4_ADDRESS_FOR_NG_AMF = "192.168.8.42";
           GNB_INTERFACE_NAME_FOR_NGU = "n3";
-          GNB_IPV4_ADDRESS_FOR_NGU = "172.3.0.2";
+          GNB_IPV4_ADDRESS_FOR_NGU = "192.168.8.42";
           GNB_PORT_FOR_S1U = 2152; # Spec 2152
         };
       }
