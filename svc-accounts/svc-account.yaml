@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: oai-gnb-cu-cp-sa
+  namespace: ran
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: oai-gnb-cu-up-sa
+  namespace: ran
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: oai-gnb-du-sa
+  namespace: ran
